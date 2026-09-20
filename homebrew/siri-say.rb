@@ -3,8 +3,8 @@
 class SiriSay < Formula
   desc "Drop-in replacement for say that speaks in the Siri voices"
   homepage "https://github.com/Alongside-Software/siri-say"
-  url "https://github.com/Alongside-Software/siri-say/releases/download/v1.0.0/siri-say-1.0.0-universal.tar.gz"
-  sha256 "5f50056327c1144214c20b00bc2786bf6900b88e914e2319910006a4a548b7ea"
+  url "https://github.com/Alongside-Software/siri-say/releases/download/v1.0.1/siri-say-1.0.1-universal.tar.gz"
+  sha256 "cacdb29c5efcb748f23f39d25487cce5e0f2d22d73786bdc4867bac35a8c9d01"
   license "MIT"
 
   depends_on :macos

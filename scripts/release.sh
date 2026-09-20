@@ -56,5 +56,5 @@ echo "==> $tarball"
 echo "    sha256 $checksum"
 echo
 echo "for the Homebrew formula:"
-echo "  url \"https://gitlab.com/alongside-oss/siri-say/-/releases/v$version/downloads/siri-say-$version-universal.tar.gz\""
+echo "  url \"https://github.com/Alongside-Software/siri-say/releases/download/v$version/siri-say-$version-universal.tar.gz\""
 echo "  sha256 \"$checksum\""

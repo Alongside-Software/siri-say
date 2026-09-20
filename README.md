@@ -3,24 +3,18 @@
 `say`, in a Siri voice.
 
 macOS ships two speech engines. `say` uses the older one, which has never
-contained the Siri voices — `say -v com.apple.siri.natural.Aaron "hello"` is
-accepted, exits 0, and quietly speaks in the default voice instead. The newer
-engine, `AVSpeechSynthesizer`, does have them, but only shows them to processes
-Apple signed: a locally built binary sees 182 voices where `osascript` sees 196.
+contained the Siri voices. The newer engine does have them, but only shows them to processes
+Apple signed.
 
-So `siri-say` parses the command line and `osascript` does the speaking. The JXA
+So `siri-say` parses the command line and it wraps `osascript` for the speaking. The JXA
 program it runs is embedded in the binary; there is nothing else to install.
 
 ## Installing it
 
 ```sh
-brew tap alongside-oss/tap https://gitlab.com/alongside-oss/homebrew-tap.git
-brew install alongside-oss/tap/siri-say
+brew install alongside-software/tap/siri-say
 siri-say install
 ```
-
-The tap needs its URL spelled out the first time because Homebrew only guesses
-at GitHub.
 
 Or download the tarball from the releases page, unpack it, and run
 `./siri-say install`. The released binary is universal, signed with the

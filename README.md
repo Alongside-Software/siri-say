@@ -83,6 +83,13 @@ rather than by siri-say. Everything below that rating is eloquence,
 super-compact or a novelty voice from the old engine, which is what
 `voices-old` is for.
 
+To add one, pick another language or voice in System Settings > Apple
+Intelligence & Siri > Siri > Voice, which `siri-say voices` prints at the
+bottom along with an `open` command for that pane. macOS downloads the asset
+and keeps it, so it stays listed afterwards even if you switch Siri back — one
+Mac ends up with Aaron, Aidan and Gordon from having run Siri in en-US, en-IE
+and en-AU at some point.
+
 The voice Siri itself speaks in on a given Mac may be a `custom.siri.*.premium`
 asset, which Apple exposes to no third-party process at all — siri-say then
 falls back to the same-named natural voice.

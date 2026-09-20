@@ -64,6 +64,13 @@ func printVoices() {
         print("")
         print("The rest of what say offers (\(old) voices): \(toolName) voices-old")
     }
+
+    print("")
+    print("To add a Siri voice, pick another language or voice in")
+    print("System Settings > Apple Intelligence & Siri > Siri > Voice:")
+    print("  open \"x-apple.systempreferences:com.apple.Siri-Settings.extension\"")
+    print("macOS downloads it, and it stays available here afterwards even if you")
+    print("switch Siri back.")
 }
 
 func printOldVoices() {

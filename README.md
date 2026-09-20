@@ -13,13 +13,18 @@ program it runs is embedded in the binary; there is nothing else to install.
 
 ```sh
 brew install alongside-software/tap/siri-say
+
+# To use "say" with the new voices
 siri-say install
+say "Hello World"
+
+# or just use our binary
+siri-say "Hello World"
 ```
 
+
 Or download the tarball from the releases page, unpack it, and run
-`./siri-say install`. The released binary is universal, signed with the
-Alongside Developer ID and notarized, so it runs straight from a download with
-no Gatekeeper prompt.
+`./siri-say install`. The released binary is universal.
 
 `siri-say install` puts a `say` shim beside the binary. If siri-say is already
 somewhere that beats `/usr/bin` on PATH — anywhere Homebrew put it — it stays
@@ -28,7 +33,7 @@ there and only the shim is added; otherwise it copies itself to
 else with `--dir ~/bin`, and undo the lot with `siri-say uninstall`.
 
 `/usr/bin/say` itself is protected by SIP and cannot be replaced, so the shim
-wins only because it sits earlier on PATH; install says so if it does not.
+wins only because it sits earlier on PATH.
 Anything calling `/usr/bin/say` by absolute path is untouched.
 
 ## Build and release

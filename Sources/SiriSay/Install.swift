@@ -5,10 +5,18 @@ enum Install {
 
     /// A copy already somewhere that beats `/usr/bin` on PATH — where Homebrew puts
     /// it — stays put and only gains the shim.
+    ///
+    /// The unresolved directory is tried first: Homebrew keeps the binary in the
+    /// Cellar and links it onto PATH, so resolving the link lands somewhere PATH
+    /// has never heard of.
     private static func defaultDirectory() -> String? {
+        let manager = FileManager.default
         if let current = Bundle.main.executablePath {
-            let home = ((current as NSString).resolvingSymlinksInPath as NSString).deletingLastPathComponent
-            if FileManager.default.isWritableFile(atPath: home) && comesBeforeSystemBin(home) {
+            let homes = [
+                (current as NSString).deletingLastPathComponent,
+                ((current as NSString).resolvingSymlinksInPath as NSString).deletingLastPathComponent
+            ]
+            for home in homes where manager.isWritableFile(atPath: home) && comesBeforeSystemBin(home) {
                 return home
             }
         }
@@ -58,9 +66,16 @@ enum Install {
         do {
             try manager.createDirectory(atPath: expanded, withIntermediateDirectories: true)
 
-            if (source as NSString).standardizingPath != toolPath {
+            // Copy what the executable really is. Homebrew's copy on PATH is a
+            // relative symlink into the Cellar, which would dangle anywhere else.
+            // Both sides are standardized, or a /private prefix on one of them
+            // reads as a different file and the copy clobbers the link in place.
+            let realSource = (source as NSString).resolvingSymlinksInPath
+            let destination = (toolPath as NSString).standardizingPath
+            if (source as NSString).standardizingPath != destination
+                && (realSource as NSString).standardizingPath != destination {
                 if manager.fileExists(atPath: toolPath) { try manager.removeItem(atPath: toolPath) }
-                try manager.copyItem(atPath: source, toPath: toolPath)
+                try manager.copyItem(atPath: realSource, toPath: toolPath)
                 try manager.setAttributes([.posixPermissions: 0o755], ofItemAtPath: toolPath)
             }
 
@@ -130,7 +145,10 @@ enum Install {
                 print("removed   \(shimPath)")
                 removed = true
             }
-            if manager.fileExists(atPath: toolPath) {
+            // Install only ever writes a real file here, so a symlink is somebody
+            // else's — Homebrew's link onto PATH — and is left for them to remove.
+            let isLink = (try? manager.destinationOfSymbolicLink(atPath: toolPath)) != nil
+            if manager.fileExists(atPath: toolPath) && !isLink {
                 try? manager.removeItem(atPath: toolPath)
                 print("removed   \(toolPath)")
                 removed = true
@@ -155,7 +173,8 @@ enum Install {
 
     private static func comesBeforeSystemBin(_ directory: String) -> Bool {
         let entries = (ProcessInfo.processInfo.environment["PATH"] ?? "").split(separator: ":").map(String.init)
-        guard let ours = entries.firstIndex(where: { ($0 as NSString).standardizingPath == directory }) else {
+        let wanted = (directory as NSString).standardizingPath
+        guard let ours = entries.firstIndex(where: { ($0 as NSString).standardizingPath == wanted }) else {
             return false
         }
         guard let system = entries.firstIndex(of: "/usr/bin") else { return true }

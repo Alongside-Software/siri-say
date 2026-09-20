@@ -1,6 +1,6 @@
 import Foundation
 
-let version = "1.0.1"
+let version = "1.0.2"
 
 let invocation = CommandLine.arguments
 let toolName = URL(fileURLWithPath: invocation.first ?? "siri-say").lastPathComponent

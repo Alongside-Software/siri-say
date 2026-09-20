@@ -34,20 +34,45 @@ func textToSpeak(_ options: Options) -> String {
     return readStandardInput()
 }
 
-func printVoices() {
-    let siriVoices = Speech.voiceListing()
-    if siriVoices.isEmpty {
-        print("No Siri voices are installed. Pick one in System Settings > Siri.")
-    } else {
-        print(siriVoices)
-    }
-    fflush(stdout)
-
+/// Everything `say -v '?'` reports, one entry per line.
+func oldVoices() -> [String] {
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/bin/say")
     process.arguments = ["-v", "?"]
-    try? process.run()
+    let pipe = Pipe()
+    process.standardOutput = pipe
+
+    guard (try? process.run()) != nil else { return [] }
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
     process.waitUntilExit()
+
+    return String(decoding: data, as: UTF8.self)
+        .split(separator: "\n", omittingEmptySubsequences: true)
+        .map(String.init)
+}
+
+func printVoices() {
+    let advanced = Speech.voiceListing()
+    guard !advanced.isEmpty else {
+        print("No Siri voices are installed. Pick one in System Settings > Siri.")
+        return
+    }
+    print(advanced)
+
+    let old = oldVoices().count
+    if old > 0 {
+        print("")
+        print("The rest of what say offers (\(old) voices): \(toolName) voices-old")
+    }
+}
+
+func printOldVoices() {
+    let voices = oldVoices()
+    if voices.isEmpty {
+        print("could not read the voice list from /usr/bin/say")
+    } else {
+        print(voices.joined(separator: "\n"))
+    }
 }
 
 func printUsage() {
@@ -58,9 +83,11 @@ func printUsage() {
            siri-say install [--dir <path>] [--force]
            siri-say uninstall [--dir <path>]
            siri-say voices
+           siri-say voices-old
 
     With no -v, it speaks in whichever Siri voice is selected in System Settings.
-    -v '?' lists the Siri voices first, then the voices say already knew about.
+    -v '?' and `voices` list the Siri voices and the enhanced ones; `voices-old`
+    lists everything say has always offered, novelty voices included.
 
     Ask for a classic voice, or a flag not listed above, and the call is handed
     to /usr/bin/say unchanged.
@@ -74,6 +101,9 @@ if toolName != "say", let first = arguments.first {
     case "uninstall": exit(Install.uninstall(arguments: rest))
     case "voices":
         printVoices()
+        exit(0)
+    case "voices-old":
+        printOldVoices()
         exit(0)
     case "help":
         printUsage()

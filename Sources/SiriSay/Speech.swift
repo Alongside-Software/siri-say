@@ -28,7 +28,7 @@ enum Speech {
         return SystemSiriVoice(name: name, language: language)
     }
 
-    /// One line per installed Siri voice, in `say -v '?'` format.
+    /// One line per Siri voice and per enhanced-or-better voice from the old engine.
     static func voiceListing() -> String {
         let result = runScript(arguments: ["list", "", "", "", "", "", ""])
         guard result.status == 0 else { return "" }

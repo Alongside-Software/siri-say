@@ -78,11 +78,33 @@ function pad(text, width) {
 }
 
 function listing() {
-  var voices = siriVoices()
+  var all = $.AVSpeechSynthesisVoice.speechVoices
+  var rows = []
+  for (var i = 0; i < all.count; i++) {
+    var voice = all.objectAtIndex(i)
+    // AVSpeechSynthesisVoiceQuality is 1-based: 1 default, 2 enhanced, 3 premium.
+    // Everything below enhanced is eloquence, super-compact or a novelty voice.
+    if (voice.quality < 2) continue
+    var identifier = ObjC.unwrap(voice.identifier)
+    var siri = identifier.indexOf(SIRI_PREFIX) === 0
+    rows.push({
+      siri: siri,
+      // Every Siri voice is named "Voice 1"; the identifier carries the real one.
+      // Other names are printed as `say -v '?'` spells them, so they can be copied.
+      name: siri ? identifier.split('.').pop() : ObjC.unwrap(voice.name),
+      language: ObjC.unwrap(voice.language)
+    })
+  }
+
+  rows.sort(function (a, b) {
+    if (a.siri !== b.siri) return a.siri ? -1 : 1
+    return a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+  })
+
   var lines = []
-  for (var i = 0; i < voices.length; i++) {
-    var voice = voices[i]
-    lines.push(pad(voice.shortName, 20) + pad(voice.language, 9) + '# Siri voice (' + voice.identifier + ')')
+  for (var j = 0; j < rows.length; j++) {
+    lines.push(pad(rows[j].name, 20) + pad(rows[j].language, 9) +
+      (rows[j].siri ? 'Siri' : 'enhanced (via say)'))
   }
   return lines.join('\n')
 }

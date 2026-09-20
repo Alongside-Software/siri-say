@@ -68,11 +68,24 @@ the `com.apple.assistant.backedup` preference domain — and uses the matching
 ### Voices
 
 Siri voices are named by their identifier's last word: `Aaron`, `Gordon`,
-`Aidan`, and so on, one per language and Siri "Voice 1–4" slot. Only the ones
-downloaded on this Mac are available; `siri-say voices` lists them. The voice
-Siri itself speaks in on a given Mac may be a `custom.siri.*.premium` asset,
-which Apple exposes to no third-party process at all — siri-say then falls back
-to the same-named natural voice.
+`Aidan`, and so on, one per language and Siri "Voice 1-4" slot.
+
+```sh
+siri-say voices       # Siri voices, plus the enhanced ones say can manage
+siri-say voices-old   # everything say has always offered, novelty voices and all
+```
+
+`voices` is read from the system each time it runs, so a Siri voice downloaded
+in System Settings shows up on the next call with nothing to configure. It also
+keeps the handful of non-Siri voices macOS rates enhanced or better — Daniel,
+Moira, Tara — marked `via say`, because those are spoken by `/usr/bin/say`
+rather than by siri-say. Everything below that rating is eloquence,
+super-compact or a novelty voice from the old engine, which is what
+`voices-old` is for.
+
+The voice Siri itself speaks in on a given Mac may be a `custom.siri.*.premium`
+asset, which Apple exposes to no third-party process at all — siri-say then
+falls back to the same-named natural voice.
 
 ### Flags
 

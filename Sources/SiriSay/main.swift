@@ -1,6 +1,6 @@
 import Foundation
 
-let version = "1.0.2"
+let version = "1.0.3"
 
 let invocation = CommandLine.arguments
 let toolName = URL(fileURLWithPath: invocation.first ?? "siri-say").lastPathComponent
@@ -66,11 +66,11 @@ func printVoices() {
     }
 
     print("")
-    print("To add a Siri voice, pick another language or voice in")
-    print("System Settings > Apple Intelligence & Siri > Siri > Voice:")
-    print("  open \"x-apple.systempreferences:com.apple.Siri-Settings.extension\"")
-    print("macOS downloads it, and it stays available here afterwards even if you")
-    print("switch Siri back.")
+    print("To add a Siri voice, open System Settings > Apple Intelligence & Siri >")
+    print("Siri. Next to Voice, click Select\u{2026} and pick from Variations and Voices.")
+    print("macOS downloads it in the background and it shows up here once it has.")
+    print("For a voice in another language, change Language first — a downloaded")
+    print("voice stays available even after you switch Siri back.")
 }
 
 func printOldVoices() {
